@@ -1,7 +1,7 @@
 <p align="center">
 <img
     src="https://raw.githubusercontent.com/1ndevelopment/NESendo/refs/heads/master/nesendo-snakes-logo.png"
-    width="60%"
+    width="75%"
 />
 </p>
 
@@ -133,6 +133,8 @@ pip install .
 ### 6.  Play a game
 
 ```shell
+## Launch via GUI:s
+
 python nesendo_gui.py
 
 ## OR launch with CLI:
