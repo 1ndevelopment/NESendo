@@ -65,9 +65,10 @@ void APU::reset() {
 void APU::step() {
     if (!audio_enabled) return;
     
-    // Update frame counter every 14915 CPU cycles (quarter frame)
+    // Update frame counter every 3728.5 CPU cycles (quarter frame)
+    // NES APU frame counter runs at 240Hz (60Hz * 4)
     frame_counter_cycles++;
-    if (frame_counter_cycles >= 14915) {
+    if (frame_counter_cycles >= 3728) {  // 3728.5 cycles per quarter frame
         update_frame_counter();
         frame_counter_cycles = 0;
     }
@@ -100,29 +101,31 @@ void APU::generate_frame_audio() {
         // Only generate audio if channels are actually enabled and have valid frequencies
         // AND if the game has actually written to the audio registers
         if (pulse1.enabled && pulse1.frequency > 0 && pulse1.frequency < 20000 && pulse1.volume > 0.0f) {
-            sample += generate_pulse_sample(pulse1) * 0.2f;  // Restore some volume
+            sample += generate_pulse_sample(pulse1);
         }
         if (pulse2.enabled && pulse2.frequency > 0 && pulse2.frequency < 20000 && pulse2.volume > 0.0f) {
-            sample += generate_pulse_sample(pulse2) * 0.2f;  // Restore some volume
+            sample += generate_pulse_sample(pulse2);
         }
         if (triangle.enabled && triangle.frequency > 0 && triangle.frequency < 20000 && triangle.volume > 0.0f) {
-            sample += generate_triangle_sample(triangle) * 0.2f;  // Restore some volume
+            sample += generate_triangle_sample(triangle);
         }
         if (noise.enabled && noise.period > 0 && noise.volume > 0.0f) {
-            sample += generate_noise_sample(noise) * 0.1f;  // Restore some noise volume
+            sample += generate_noise_sample(noise);
         }
         if (dmc.enabled && dmc.volume > 0.0f) {
-            sample += generate_dmc_sample(dmc) * 0.2f;  // Restore some volume
+            sample += generate_dmc_sample(dmc);
         }
         
         // Apply master volume
         sample *= master_volume;
         
-        // Apply moderate low-pass filter to remove high-frequency artifacts
+        // Apply NES-style audio filtering to remove high-frequency artifacts
+        // Multi-stage low-pass filter to simulate NES audio characteristics
+        float filtered_sample = 0.7f * sample + 0.3f * prev_sample;
+        filtered_sample = 0.8f * filtered_sample + 0.2f * prev_prev_sample;
         
-        // Two-stage low-pass filter to remove high-frequency noise
-        float filtered_sample = 0.8f * sample + 0.2f * prev_sample;
-        filtered_sample = 0.9f * filtered_sample + 0.1f * prev_prev_sample;
+        // Additional smoothing to reduce aliasing
+        filtered_sample = 0.9f * filtered_sample + 0.1f * prev_sample;
         
         prev_prev_sample = prev_sample;
         prev_sample = filtered_sample;
@@ -289,18 +292,22 @@ float APU::generate_pulse_sample(const PulseChannel& channel) {
     
     phase = (phase + 1) % period;
     
-    // Generate square wave based on duty cycle
+    // Generate NES-style pulse wave with proper duty cycles
     float sample = 0.0f;
+    int duty_phase = phase * 8 / period;  // 8 phases for NES duty cycles
+    
     if (channel.duty_cycle) {
-        // 50% duty cycle
-        sample = (phase < period / 2) ? 1.0f : -1.0f;
+        // 50% duty cycle (12.5%, 25%, 50%, 75%)
+        if (duty_phase < 4) sample = 1.0f;
+        else sample = -1.0f;
     } else {
-        // 25% duty cycle
-        sample = (phase < period / 4) ? 1.0f : -1.0f;
+        // 25% duty cycle (12.5%, 25%, 50%, 75%)
+        if (duty_phase < 2) sample = 1.0f;
+        else sample = -1.0f;
     }
     
-    // Apply volume and ensure we don't generate extreme values
-    return sample * channel.volume * 0.4f;  // Restore some amplitude
+    // Apply volume with proper NES scaling
+    return sample * channel.volume * 0.15f;  // NES pulse channels are quieter
 }
 
 float APU::generate_triangle_sample(const TriangleChannel& channel) {
@@ -313,32 +320,37 @@ float APU::generate_triangle_sample(const TriangleChannel& channel) {
     // Use a more stable phase calculation
     triangle_phase = (triangle_phase + 1) % period;
     
-    // Generate triangle wave
+    // Generate NES-style triangle wave (32-step staircase)
     float sample = 0.0f;
-    if (triangle_phase < period / 2) {
-        sample = (2.0f * triangle_phase / (period / 2)) - 1.0f;
+    int step = (triangle_phase * 32) / period;
+    
+    if (step < 16) {
+        sample = (step - 8) / 8.0f;  // Rising edge
     } else {
-        sample = 3.0f - (2.0f * triangle_phase / (period / 2));
+        sample = (24 - step) / 8.0f;  // Falling edge
     }
     
-    // Apply volume and reduce amplitude
-    return sample * channel.volume * 0.5f;  // Restore some amplitude
+    // Apply volume with proper NES scaling
+    return sample * channel.volume * 0.25f;  // Triangle is louder than pulse
 }
 
 float APU::generate_noise_sample(const NoiseChannel& channel) {
     if (!channel.enabled || channel.period <= 0) return 0.0f;
     
-    // Simple noise generation using linear feedback shift register
+    // NES-style noise generation using linear feedback shift register
     noise_counter++;
     if (noise_counter >= channel.period) {
         noise_counter = 0;
-        // 15-bit LFSR for noise generation
+        // 15-bit LFSR for noise generation (NES uses bit 0 and 1 for feedback)
         int feedback = (noise_lfsr ^ (noise_lfsr >> 1)) & 1;
         noise_lfsr = (noise_lfsr >> 1) | (feedback << 14);
     }
     
+    // Generate noise sample based on LFSR
     float sample = (noise_lfsr & 1) ? 1.0f : -1.0f;
-    return sample * channel.volume * 0.3f;  // Reduce noise amplitude significantly
+    
+    // Apply volume with proper NES scaling
+    return sample * channel.volume * 0.1f;  // Noise is quieter than other channels
 }
 
 float APU::generate_dmc_sample(const DMCChannel& channel) {
@@ -393,11 +405,20 @@ void APU::clock_linear_counter() {
 }
 
 void APU::clock_length_counters() {
-    // Simple length counter implementation
-    if (pulse1.counter > 0) pulse1.counter--;
-    if (pulse2.counter > 0) pulse2.counter--;
-    if (triangle.counter > 0) triangle.counter--;
-    if (noise.counter > 0) noise.counter--;
+    // NES-style length counter implementation
+    // Length counters are clocked on quarter frame
+    if (frame_counter.step == 0 || frame_counter.step == 2) {
+        if (pulse1.counter > 0) pulse1.counter--;
+        if (pulse2.counter > 0) pulse2.counter--;
+        if (triangle.counter > 0) triangle.counter--;
+        if (noise.counter > 0) noise.counter--;
+    }
+    
+    // Disable channels when length counter reaches zero
+    if (pulse1.counter == 0) pulse1.enabled = false;
+    if (pulse2.counter == 0) pulse2.enabled = false;
+    if (triangle.counter == 0) triangle.enabled = false;
+    if (noise.counter == 0) noise.enabled = false;
 }
 
 void APU::clock_envelopes() {

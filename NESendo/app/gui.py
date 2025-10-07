@@ -957,21 +957,17 @@ class NESendoGUI(QMainWindow):
         try:
             # Convert numpy array to bytes
             if audio_data.dtype != np.int16:
-                # Apply aggressive smoothing filter to reduce static and artifacts
+                # Apply gentle smoothing filter to reduce artifacts without over-filtering
                 audio_data = np.clip(audio_data, -1.0, 1.0)
                 
-                # Apply multi-stage smoothing to reduce high-frequency noise
-                if len(audio_data) > 2:
-                    # First pass: basic smoothing
+                # Apply light smoothing to reduce high-frequency noise
+                if len(audio_data) > 1:
+                    # Single pass smoothing to preserve audio quality
                     for i in range(1, len(audio_data)):
-                        audio_data[i] = 0.6 * audio_data[i] + 0.4 * audio_data[i-1]
-                    
-                    # Second pass: additional smoothing
-                    for i in range(2, len(audio_data)):
-                        audio_data[i] = 0.7 * audio_data[i] + 0.3 * audio_data[i-2]
+                        audio_data[i] = 0.8 * audio_data[i] + 0.2 * audio_data[i-1]
                 
-                # Convert to int16 with proper scaling
-                audio_data = (audio_data * 24576).astype(np.int16)  # Restore some amplitude
+                # Convert to int16 with proper NES-style scaling
+                audio_data = (audio_data * 16384).astype(np.int16)  # More conservative scaling
             
             # Initialize audio device if not already done
             if self.audio_device is None:
@@ -983,7 +979,7 @@ class NESendoGUI(QMainWindow):
                 audio_bytes = audio_data.tobytes()
                 
                 # Write in smaller chunks to prevent audio dropouts
-                chunk_size = 512  # Even smaller chunks for smoother playback
+                chunk_size = 1024  # Larger chunks for better performance
                 for i in range(0, len(audio_bytes), chunk_size):
                     chunk = audio_bytes[i:i + chunk_size]
                     if chunk:
