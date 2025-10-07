@@ -212,7 +212,7 @@ If you encounter issues during the build process:
 3. **PyInstaller errors:** Try updating PyInstaller to the latest version
 4. **Runtime errors:** Test the binary with the included test ROMs first
 
-# Preferred Installation
+# PIP Package Installation
 
 The preferred installation of `NESendo` is from `pip`:
 
