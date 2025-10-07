@@ -33,6 +33,16 @@ print_error() {
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
+# Set up cleanup trap to run on script exit/interrupt
+cleanup() {
+    print_status "Cleaning up on exit..."
+    rm -f "$PROJECT_ROOT/nesendo_gui.spec" 2>/dev/null || true
+    if [ -d "$PROJECT_ROOT/build" ]; then
+        rm -rf "$PROJECT_ROOT/build" 2>/dev/null || true
+    fi
+}
+trap cleanup EXIT INT TERM
+
 print_status "NESendo Binary Build Script"
 print_status "Project root: $PROJECT_ROOT"
 
@@ -249,12 +259,44 @@ if [ -f "$BINARY_PATH" ]; then
     
 else
     print_error "Binary was not created. Check the build output above for errors."
+    
+    # Clean up even on failure
+    print_status "Cleaning up after failed build..."
+    rm -f "$SPEC_FILE"
+    if [ -d "$BUILD_DIR" ]; then
+        rm -rf "$BUILD_DIR"
+    fi
+    
     exit 1
 fi
 
-# Clean up spec file
-print_status "Cleaning up..."
+# Clean up build artifacts
+print_status "Cleaning up build artifacts..."
+
+# Remove the spec file
 rm -f "$SPEC_FILE"
 
+# Remove the build directory (contains temporary build files)
+if [ -d "$BUILD_DIR" ]; then
+    print_status "Removing build directory: $BUILD_DIR"
+    rm -rf "$BUILD_DIR"
+fi
+
+# Remove any .pyc files that might have been created
+print_status "Removing Python cache files..."
+find "$PROJECT_ROOT" -name "*.pyc" -delete 2>/dev/null || true
+find "$PROJECT_ROOT" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+# Remove any temporary files that might have been created
+print_status "Removing temporary files..."
+rm -f "$PROJECT_ROOT"/*.tmp 2>/dev/null || true
+rm -f "$PROJECT_ROOT"/*.log 2>/dev/null || true
+
+print_success "Cleanup completed!"
+print_status "Cleaned up:"
+print_status "  - PyInstaller spec file"
+print_status "  - Build directory with temporary files"
+print_status "  - Python cache files (.pyc, __pycache__)"
+print_status "  - Temporary files (.tmp, .log)"
 print_success "Build process completed!"
 print_status "The standalone binary is ready at: $BINARY_PATH"
