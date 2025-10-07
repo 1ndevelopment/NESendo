@@ -556,8 +556,13 @@ void CPU::cycle(MainBus &bus) {
     // must be before ExecuteType0
     if (implied(bus, op) || branch(bus, op) || type1(bus, op) || type2(bus, op) || type0(bus, op))
         skip_cycles += OPERATION_CYCLES[op];
-    else
+    else {
         std::cout << "failed to execute opcode: " << std::hex << +op << std::endl;
+        // Reset CPU to a safe state when encountering invalid opcodes
+        // This prevents crashes during state restoration with corrupted PC
+        register_PC = read_address(bus, RESET_VECTOR);
+        std::cout << "CPU reset to safe state at PC: " << std::hex << register_PC << std::endl;
+    }
 }
 
 }  // namespace NES

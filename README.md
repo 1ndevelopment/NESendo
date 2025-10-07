@@ -92,17 +92,16 @@ Make sure you have the `clang++` compiler installed:
 
 ```shell
 ## On debian distros
-sudo apt-get install clang
+sudo apt-get install clang scons
 ## On arch distros
-sudo pacman -S clang
+sudo pacman -S clang scons
 ```
-
-Complete Build and Run Example
 
 ### 1.  Clone/setup project
 
 ```shell
-cd /path/to/NESendo
+git clone https://git.1ndev.com/1ndevelopment/NESendo
+cd NESendo
 ```
 
 ### 2.  Install dependencies
@@ -117,25 +116,18 @@ pip install -r requirements.txt
 make lib_nes_env
 ```
 
-### 4.  Build distribution packages
+### 3.  Install the package
 
 ```shell
-python -m build
+pip install -e .
 ```
 
-### 5.  Install the package
-
-```shell
-pip install dist/nesendo-8.2.1-cp311-cp311-linux_x86_64.whl
-pip install .
-```
-
-### 6.  Play a game
+### 4.  Play a game
 
 ```shell
 ## Launch via GUI:s
 
-python nesendo_gui.py
+python -m NESendo.app.gui
 
 ## OR launch with CLI:
 
@@ -192,7 +184,7 @@ The compiled binary includes:
 
 ## Customizing the Build
 
-The build process is controlled by the `nesendo_gui.spec` file. You can modify this file to:
+The build process is controlled by the generated `.spec` file. You can modify this file to:
 
 - Change the binary name
 - Add additional data files

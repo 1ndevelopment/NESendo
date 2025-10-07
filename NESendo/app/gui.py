@@ -192,7 +192,7 @@ class GameDisplayWidget(QLabel):
         """Load and display the NESendo logo image."""
         try:
             # Get the path to the logo image
-            logo_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'nesendo-snakes-logo.png')
+            logo_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'imgs', 'logo.png')
             
             # Load the image
             pixmap = QPixmap(logo_path)
@@ -333,10 +333,10 @@ class ControlPanel(QWidget):
             "A - Left\n"
             "S - Down\n"
             "D - Right\n"
-            "O - A Button\n"
-            "P - B Button\n"
+            "X - A Button\n"
+            "Z - B Button\n"
             "Enter - Start\n"
-            "Space - Select\n"
+            "Shift - Select\n"
             "Escape - Exit"
         )
         controls_text.setReadOnly(True)
@@ -554,6 +554,12 @@ class NESendoGUI(QMainWindow):
     def init_ui(self):
         """Initialize the user interface."""
         self.setWindowTitle("NESendo")
+        
+        # Set window icon
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'imgs', 'icon-mini.png')
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
+        
         # Start with a reasonable window size
         self.setGeometry(100, 100, 600, 500)
         
@@ -845,14 +851,14 @@ class NESendoGUI(QMainWindow):
         """Initialize the keymapping system."""
         # NES controller mapping matching NESEnv layout
         self.key_mapping = {
-            Qt.Key_W: 16,        # Up
-            Qt.Key_A: 64,        # Left  
-            Qt.Key_S: 32,        # Down
-            Qt.Key_D: 128,       # Right
-            Qt.Key_O: 2,         # A Button
-            Qt.Key_P: 1,         # B Button
-            Qt.Key_Return: 8,    # Start
-            Qt.Key_Space: 4,     # Select
+            Qt.Key_Up: 16,         # Up
+            Qt.Key_Left: 64,       # Left
+            Qt.Key_Down: 32,       # Down
+            Qt.Key_Right: 128,     # Right
+            Qt.Key_X: 1,           # A Button
+            Qt.Key_Z: 2,           # B Button
+            Qt.Key_Return: 8,      # Start
+            Qt.Key_Shift: 4,       # Select
         }
         
         # Track pressed keys
@@ -1032,7 +1038,7 @@ class NESendoGUI(QMainWindow):
                 return
         
         # Allow certain keys to pass through for UI navigation
-        if event.key() in [Qt.Key_Escape, Qt.Key_F11, Qt.Key_Alt, Qt.Key_Control, Qt.Key_Shift]:
+        if event.key() in [Qt.Key_Escape, Qt.Key_F11, Qt.Key_Alt, Qt.Key_Control]:
             super().keyPressEvent(event)
         else:
             # Consume all other keys during emulation
@@ -1053,7 +1059,7 @@ class NESendoGUI(QMainWindow):
                 return
         
         # Allow certain keys to pass through for UI navigation
-        if event.key() in [Qt.Key_Escape, Qt.Key_F11, Qt.Key_Alt, Qt.Key_Control, Qt.Key_Shift]:
+        if event.key() in [Qt.Key_Escape, Qt.Key_F11, Qt.Key_Alt, Qt.Key_Control]:
             super().keyReleaseEvent(event)
         else:
             # Consume all other keys during emulation
@@ -1340,13 +1346,97 @@ class NESendoGUI(QMainWindow):
     
     def show_about(self):
         """Show the About dialog."""
-        about_text = (
-            "NESendo ~\n\n"
-            "• A modern NES emulator with a PyQt5 GUI and C++ core\n"
-            "• Open-source, educational, and development focused\n\n"
-            "© 2025 1ndevelopment - Licensed under MIT License"
+        dialog = QDialog(self)
+        dialog.setWindowTitle("About NESendo")
+        dialog.setModal(True)
+        dialog.resize(400, 300)
+        
+        # Set the same icon as the main window
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'imgs', 'icon-mini.png')
+        if os.path.exists(icon_path):
+            dialog.setWindowIcon(QIcon(icon_path))
+        
+        layout = QVBoxLayout()
+        layout.setSpacing(20)
+        layout.setContentsMargins(30, 30, 30, 30)
+        
+        # Icon and title section
+        icon_title_layout = QHBoxLayout()
+        
+        # Add icon
+        if os.path.exists(icon_path):
+            icon_label = QLabel()
+            icon_pixmap = QPixmap(icon_path)
+            # Scale icon to reasonable size
+            scaled_pixmap = icon_pixmap.scaled(128, 128, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            icon_label.setPixmap(scaled_pixmap)
+            icon_label.setAlignment(Qt.AlignCenter)
+            icon_title_layout.addWidget(icon_label)
+        
+        # Add title and version
+        title_layout = QVBoxLayout()
+        title_label = QLabel("NESendo")
+        title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #cbd5e0;")
+        title_label.setAlignment(Qt.AlignCenter)
+        
+        version_label = QLabel("v8.2.1")
+        version_label.setStyleSheet("font-size: 14px; color: #a0aec0;")
+        version_label.setAlignment(Qt.AlignCenter)
+        
+        title_layout.addWidget(title_label)
+        title_layout.addWidget(version_label)
+        icon_title_layout.addLayout(title_layout)
+        
+        layout.addLayout(icon_title_layout)
+        
+        # Description
+        description_label = QLabel(
+            "• Modern NES emulator with a PyQt5 GUI and C++ core<br>"
+            "• Open-source, educational, and development focused"
         )
-        QMessageBox.about(self, "About NESendo GUI", about_text)
+        description_label.setStyleSheet("font-size: 12px; color: #cbd5e0; line-height: 1.4;")
+        description_label.setAlignment(Qt.AlignCenter)
+        description_label.setWordWrap(True)
+        layout.addWidget(description_label)
+        
+        # Copyright
+        copyright_label = QLabel("© 2025 1ndevelopment - Licensed under MIT License")
+        copyright_label.setStyleSheet("font-size: 10px; color: #718096;")
+        copyright_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(copyright_label)
+        
+        # OK button
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        ok_button = QPushButton("OK")
+        ok_button.clicked.connect(dialog.accept)
+        ok_button.setStyleSheet("""
+            QPushButton {
+                background-color: #2d3748;
+                border: 1px solid #2d3748;
+                color: #cbd5e0;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+            QPushButton:hover {
+                background-color: #2d5a27;
+            }
+        """)
+        button_layout.addWidget(ok_button)
+        button_layout.addStretch()
+        layout.addLayout(button_layout)
+        
+        # Apply dark theme to dialog
+        dialog.setStyleSheet("""
+            QDialog {
+                background-color: #0f1419;
+                color: #cbd5e0;
+            }
+        """)
+        
+        dialog.setLayout(layout)
+        dialog.exec_()
 
     
     def show_settings_dialog(self):
@@ -1517,6 +1607,9 @@ class NESendoGUI(QMainWindow):
             if slot in self.state_slots:
                 # We have a state in memory, just restore the C++ backup
                 if self.emulation_thread and self.emulation_thread.env:
+                    # Add a small delay to ensure emulation is stable before restoration
+                    import time
+                    time.sleep(0.01)  # 10ms delay to allow emulation to stabilize
                     self.emulation_thread.env._restore()
             else:
                 # For file-based savestates, we can't safely restore the full state

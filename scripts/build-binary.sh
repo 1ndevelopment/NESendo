@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build script for NESendo GUI binary
-# This script creates a standalone binary from nesendo_gui.py using PyInstaller
+# This script creates a standalone binary from NESendo GUI using PyInstaller
 
 set -e  # Exit on any error
 
@@ -37,6 +37,7 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 cleanup() {
     print_status "Cleaning up on exit..."
     rm -f "$PROJECT_ROOT/nesendo_gui.spec" 2>/dev/null || true
+    rm -f "$PROJECT_ROOT/nesendo_gui_launcher.py" 2>/dev/null || true
     if [ -d "$PROJECT_ROOT/build" ]; then
         rm -rf "$PROJECT_ROOT/build" 2>/dev/null || true
     fi
@@ -46,11 +47,28 @@ trap cleanup EXIT INT TERM
 print_status "NESendo Binary Build Script"
 print_status "Project root: $PROJECT_ROOT"
 
-# Check if we're in the right directory
-if [ ! -f "$PROJECT_ROOT/nesendo_gui.py" ]; then
-    print_error "nesendo_gui.py not found in project root: $PROJECT_ROOT"
+# Check if we're in the right directory and package is installed
+if [ ! -d "$PROJECT_ROOT/NESendo" ]; then
+    print_error "NESendo package not found in project root: $PROJECT_ROOT"
     exit 1
 fi
+
+# Create a temporary launcher script for PyInstaller
+print_status "Creating temporary launcher script..."
+cat > "$PROJECT_ROOT/nesendo_gui_launcher.py" << 'EOF'
+#!/usr/bin/env python3
+"""Temporary launcher for PyInstaller build."""
+import sys
+import os
+
+# Add the NESendo package to the Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'NESendo'))
+
+from NESendo.app.gui import main
+
+if __name__ == "__main__":
+    main()
+EOF
 
 # Check if PyInstaller is installed
 if ! command -v pyinstaller &> /dev/null; then
@@ -129,7 +147,7 @@ from pathlib import Path
 project_root = os.path.dirname(os.path.abspath(SPEC))
 
 # Define the main script
-main_script = os.path.join(project_root, 'nesendo_gui.py')
+main_script = os.path.join(project_root, 'nesendo_gui_launcher.py')
 
 # Define data files to include
 datas = []
@@ -145,9 +163,9 @@ if os.path.exists(lib_path):
     datas.append((lib_path, '.'))
 
 # Include the logo image
-logo_path = os.path.join(project_root, 'nesendo-snakes-logo.png')
+logo_path = os.path.join(project_root, 'NESendo', 'imgs', 'logo.png')
 if os.path.exists(logo_path):
-    datas.append((logo_path, '.'))
+    datas.append((logo_path, 'imgs'))
 
 # Include any other necessary files
 additional_files = [
