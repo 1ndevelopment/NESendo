@@ -1,29 +1,12 @@
 <p align="center">
 <img
-    src="https://user-images.githubusercontent.com/2184469/42918029-a8364c66-8ad1-11e8-8147-2653091ccd38.png"
-    width="50%"
+    src="https://raw.githubusercontent.com/1ndevelopment/NESendo/refs/heads/master/nesendo-snakes-logo.png"
+    width="60%"
 />
 </p>
 
-[![build-status][]][ci-server]
-[![PackageVersion][pypi-version]][pypi-home]
-[![PythonVersion][python-version]][python-home]
-[![Stable][pypi-status]][pypi-home]
-[![Format][pypi-format]][pypi-home]
-[![License][pypi-license]](LICENSE)
-
-[build-status]: https://app.travis-ci.com/Kautenja/nes-py.svg?branch=master
-[ci-server]: https://app.travis-ci.com/Kautenja/nes-py
-[pypi-version]: https://badge.fury.io/py/nes-py.svg
-[pypi-license]: https://img.shields.io/pypi/l/nes-py.svg
-[pypi-status]: https://img.shields.io/pypi/status/nes-py.svg
-[pypi-format]: https://img.shields.io/pypi/format/nes-py.svg
-[pypi-home]: https://badge.fury.io/py/nes-py
-[python-version]: https://img.shields.io/pypi/pyversions/nes-py.svg
-[python-home]: https://python.org
-
-nes-py is an NES emulator and OpenAI Gym interface for MacOS, Linux, and
-Windows based on the [SimpleNES](https://github.com/amhndu/SimpleNES) emulator.
+NESendo is a [forked](https://github.com/Kautenja/nes-py) Nintendo Entertainment System (NES) emulator designed for educational and development purposes.
+Based on the [SimpleNES](https://github.com/amhndu/SimpleNES) emulator.
 
 <table align="center">
     <tr>
@@ -97,40 +80,179 @@ Windows based on the [SimpleNES](https://github.com/amhndu/SimpleNES) emulator.
     </tr>
 </table>
 
-# Installation
+# What is this exactly?
 
-The preferred installation of `nes-py` is from `pip`:
+NESendo combines a high-performance NES emulation core written in C++ with a Python interface and a modern PyQt5 graphical user interface (GUI) featuring a dark theme.
 
-```shell
-pip install nes-py
-```
+It supports multiple popular cartridge mappers, enabling the use of a variety of classic NES games. Allowing users to run NES games, develop custom NES environments, and experiment with emulator features in a flexible Python-based ecosystem.
 
-## Debian
+# Linux Installation
 
 Make sure you have the `clang++` compiler installed:
 
 ```shell
+## On debian distros
 sudo apt-get install clang
+## On arch distros
+sudo pacman -S clang
 ```
 
-## Windows
+Complete Build and Run Example
 
-You'll need to install the Visual-Studio 17.0 tools for Windows installation.
-The [Visual Studio Community](https://visualstudio.microsoft.com/downloads/)
-package provides these tools for free.
+1.  Clone/setup project
+
+```shell
+cd /path/to/NESendo
+```
+
+2.  Install dependencies
+
+```shell
+pip install -r requirements.txt
+```
+
+3.  Build C++ library
+
+```shell
+make clean && make lib_nes_env
+```
+
+4.  Build distribution packages
+
+```shell
+python -m build
+```
+
+5.  Install the package
+
+```shell
+pip install dist/nesendo-8.2.1-cp311-cp311-linux_x86_64.whl
+pip install .
+```
+
+6.  Run tests
+
+```shell
+python -m unittest discover NESendo.tests -v
+```
+
+7.  Play a game
+
+```shell
+NESendo -r NESendo/tests/games/super-mario-bros-1.nes
+
+## OR launch with GUI:
+
+python nesendo_gui.py
+```
+
+# Building a Standalone Binary
+
+NESendo can be compiled into a standalone binary that includes all dependencies, making it easy to distribute and run without requiring Python or additional packages to be installed.
+
+## Prerequisites
+
+Before building the binary, ensure you have the following installed:
+
+- Python 3.5+ with pip
+- C++ compiler (g++ or clang++)
+- PyInstaller
+- All project dependencies
+
+## Build Steps
+
+### 1. Install Dependencies
+
+First, install the required Python packages:
+
+```shell
+pip install -r requirements.txt
+pip install pyinstaller
+```
+
+### 2. Build the C++ Library
+
+The NES emulator core is written in C++ and needs to be compiled first:
+
+```shell
+make lib_nes_env
+```
+
+This will create the `lib_nes_env.so` shared library in the `NESendo/` directory.
+
+### 3. Compile the Binary
+
+Use PyInstaller to create the standalone binary:
+
+```shell
+pyinstaller nesendo_gui.spec
+```
+
+This will create a `dist/nesendo-gui` executable file.
+
+### 4. Test the Binary
+
+Run the compiled binary to ensure it works correctly:
+
+```shell
+./dist/nesendo-gui
+```
+
+## Binary Features
+
+The compiled binary includes:
+
+- **Complete NES emulator** with C++ core
+- **PyQt5 GUI** with modern dark theme
+- **All dependencies** bundled (numpy, gymnasium, etc.)
+- **Test ROMs** included for immediate testing
+- **No installation required** - just run the executable
+
+## Binary Size and Distribution
+
+- **Size:** Approximately 66 MB
+- **Platform:** Linux x86_64 (can be built for other platforms)
+- **Dependencies:** None required on target system
+- **Portable:** Can be copied and run on any compatible Linux system
+
+## Customizing the Build
+
+The build process is controlled by the `nesendo_gui.spec` file. You can modify this file to:
+
+- Change the binary name
+- Add additional data files
+- Include custom icons
+- Modify build options
+
+## Troubleshooting
+
+If you encounter issues during the build process:
+
+1. **Missing dependencies:** Ensure all packages in `requirements.txt` are installed
+2. **C++ compilation errors:** Check that you have a compatible C++ compiler installed
+3. **PyInstaller errors:** Try updating PyInstaller to the latest version
+4. **Runtime errors:** Test the binary with the included test ROMs first
+
+# Preferred Installation
+
+The preferred installation of `NESendo` is from `pip`:
+
+```shell
+pip install NESendo
+```
 
 # Usage
 
 To access the NES emulator from the command line use the following command.
 
 ```shell
-nes_py -r <path_to_rom>
+NESendo -r <path_to_rom>
 ```
 
 To print out documentation for the command line interface execute:
 
 ```shell
-nes_py -h
+NESendo -h
 ```
 
 ## Controls
@@ -149,23 +271,23 @@ nes_py -h
 ## Parallelism Caveats
 
 both the `threading` and `multiprocessing` packages are supported by
-`nes-py` with some caveats related to rendering:
+`NESendo` with some caveats related to rendering:
 
 1.  rendering **is not** supported from instances of `threading.Thread`
 2.  rendering **is** supported from instances of `multiprocessing.Process`,
-    but `nes-py` must be imported within the process that executes the render
+    but `NESendo` must be imported within the process that executes the render
     call
 
 # Development
 
-To design a custom environment using `nes-py`, introduce new features, or fix
-a bug, please refer to the [Wiki](https://github.com/Kautenja/nes-py/wiki).
+To design a custom environment using `NESendo`, introduce new features, or fix
+a bug, please refer to the [Wiki](https://github.com/Kautenja/NESendo/wiki).
 There you will find instructions for:
 
 -   setting up the development environment
 -   designing environments based on the `NESEnv` class
 -   reference material for the `NESEnv` API
--   documentation for the `nes_py.wrappers` module
+-   documentation for the `NESendo.wrappers` module
 
 # Cartridge Mapper Compatibility
 
@@ -175,7 +297,7 @@ There you will find instructions for:
 3.  CNROM
 
 You can check the compatibility for each ROM in the following
-[list](https://github.com/Kautenja/nes-py/blob/master/nesmapper.txt)
+[list](https://github.com/Kautenja/NESendo/blob/master/nesmapper.txt)
 
 # Disclaimer
 

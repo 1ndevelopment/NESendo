@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "NESendo"
+version = "8.2.1"
+description = "An NES Emulator and Gymnasium interface"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Jacy Kincade", email = "1ndevelopment@protonmail.com"}
+]
+maintainers = [
+    {name = "Jacy Kincade", email = "1ndevelopment@protonmail.com"}
+]
+keywords = ["NES", "Emulator", "OpenAI-Gym", "Gymnasium"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Games/Entertainment",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Emulators",
+]
+requires-python = ">=3.5"
+dependencies = [
+    "gymnasium>=0.28.0",
+    "numpy>=1.18.5",
+    "pyglet<=1.5.21,>=1.4.0",
+    "tqdm>=4.48.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/1ndevelopment/NESendo"
+Repository = "https://github.com/1ndevelopment/NESendo"
+Issues = "https://github.com/1ndevelopment/NESendo/issues"
+
+[project.scripts]
+NESendo = "NESendo.app.cli:main"
+
+[tool.setuptools]
+packages = ["NESendo", "NESendo.app", "NESendo.tests", "NESendo.wrappers"]
+zip-safe = false
+
+[tool.setuptools.package-data]
+NESendo = ["nes/**/*"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["tests/*", "*.tests", "*.tests.*"]

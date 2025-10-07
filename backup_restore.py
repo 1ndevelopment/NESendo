@@ -1,16 +1,17 @@
-from nes_py import NESEnv
+from NESendo import NESEnv
 import tqdm
-env = NESEnv('./nes_py/tests/games/super-mario-bros-1.nes')
+env = NESEnv('./NESendo/tests/games/super-mario-bros-1.nes')
 
 done = True
 
 try:
     for i in tqdm.tqdm(range(5000)):
         if done:
-            state = env.reset()
+            state, _ = env.reset()
             done = False
         else:
-            state, reward, done, info = env.step(env.action_space.sample())
+            state, reward, terminated, truncated, info = env.step(env.action_space.sample())
+            done = terminated or truncated
         if (i + 1) % 12:
             env._backup()
         if (i + 1) % 27:

@@ -3,8 +3,8 @@ all: test deployment
 
 # build the LaiNES CPP code
 lib_nes_env:
-	scons -C nes_py/nes
-	mv nes_py/nes/lib_nes_env*.so nes_py
+	scons -C NESendo/nes
+	mv NESendo/nes/lib_nes_env*.so NESendo
 
 # run the Python test suite
 test: lib_nes_env

@@ -1,1 +1,5 @@
-graft nes_py/nes
+graft NESendo/nes
+include README.md
+include LICENSE
+include requirements.txt
+include pyproject.toml
