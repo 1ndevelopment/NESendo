@@ -130,20 +130,14 @@ pip install dist/nesendo-8.2.1-cp311-cp311-linux_x86_64.whl
 pip install .
 ```
 
-### 6.  Run tests
+### 6.  Play a game
 
 ```shell
-python -m unittest discover NESendo.tests -v
-```
-
-### 7.  Play a game
-
-```shell
-NESendo -r NESendo/tests/games/super-mario-bros-1.nes
-
-## OR launch with GUI:
-
 python nesendo_gui.py
+
+## OR launch with CLI:
+
+NESendo -r /path/to/rom.nes
 ```
 
 # Building a Standalone Binary
