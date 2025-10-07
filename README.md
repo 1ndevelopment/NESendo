@@ -1,6 +1,6 @@
 <p align="center">
 <img
-    src="https://raw.githubusercontent.com/1ndevelopment/NESendo/refs/heads/master/nesendo-snakes-logo.png"
+    src="https://raw.githubusercontent.com/1ndevelopment/NESendo/refs/heads/master/NESendo/imgs/logo.png"
     width="75%"
 />
 </p>
