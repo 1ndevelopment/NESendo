@@ -54,7 +54,7 @@ Issues = "https://github.com/1ndevelopment/NESendo/issues"
 NESendo = "NESendo.app.cli:main"
 
 [tool.setuptools]
-packages = ["NESendo", "NESendo.app", "NESendo.tests", "NESendo.wrappers"]
+packages = ["NESendo", "NESendo.app"]
 zip-safe = false
 
 [tool.setuptools.package-data]

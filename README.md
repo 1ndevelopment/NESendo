@@ -99,44 +99,44 @@ sudo pacman -S clang
 
 Complete Build and Run Example
 
-1.  Clone/setup project
+### 1.  Clone/setup project
 
 ```shell
 cd /path/to/NESendo
 ```
 
-2.  Install dependencies
+### 2.  Install dependencies
 
 ```shell
 pip install -r requirements.txt
 ```
 
-3.  Build C++ library
+### 3.  Build C++ library
 
 ```shell
-make clean && make lib_nes_env
+make lib_nes_env
 ```
 
-4.  Build distribution packages
+### 4.  Build distribution packages
 
 ```shell
 python -m build
 ```
 
-5.  Install the package
+### 5.  Install the package
 
 ```shell
 pip install dist/nesendo-8.2.1-cp311-cp311-linux_x86_64.whl
 pip install .
 ```
 
-6.  Run tests
+### 6.  Run tests
 
 ```shell
 python -m unittest discover NESendo.tests -v
 ```
 
-7.  Play a game
+### 7.  Play a game
 
 ```shell
 NESendo -r NESendo/tests/games/super-mario-bros-1.nes
@@ -170,32 +170,11 @@ pip install -r requirements.txt
 pip install pyinstaller
 ```
 
-### 2. Build the C++ Library
+### 2. Build the Binary using the provided script
 
-The NES emulator core is written in C++ and needs to be compiled first:
-
+A build script is provided to automate the process of compiling the C++ core and creating a standalone binary. Simply run:
 ```shell
-make lib_nes_env
-```
-
-This will create the `lib_nes_env.so` shared library in the `NESendo/` directory.
-
-### 3. Compile the Binary
-
-Use PyInstaller to create the standalone binary:
-
-```shell
-pyinstaller nesendo_gui.spec
-```
-
-This will create a `dist/nesendo-gui` executable file.
-
-### 4. Test the Binary
-
-Run the compiled binary to ensure it works correctly:
-
-```shell
-./dist/nesendo-gui
+./scripts/build-binary.sh
 ```
 
 ## Binary Features
@@ -238,7 +217,8 @@ If you encounter issues during the build process:
 The preferred installation of `NESendo` is from `pip`:
 
 ```shell
-pip install NESendo
+cd /path/to/NESendo
+pip install -e .
 ```
 
 # Usage
@@ -287,7 +267,6 @@ There you will find instructions for:
 -   setting up the development environment
 -   designing environments based on the `NESEnv` class
 -   reference material for the `NESEnv` API
--   documentation for the `NESendo.wrappers` module
 
 # Cartridge Mapper Compatibility
 
@@ -296,8 +275,7 @@ There you will find instructions for:
 2.  UxROM
 3.  CNROM
 
-You can check the compatibility for each ROM in the following
-[list](https://github.com/Kautenja/NESendo/blob/master/nesmapper.txt)
+Compatible mappers: NROM (0), MMC1/SxROM (1), UxROM (2), CNROM (3)
 
 # Disclaimer
 
