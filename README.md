@@ -227,14 +227,14 @@ NESendo -h
 
 | Keyboard Key | NES Joypad    |
 |:-------------|:--------------|
-| W            | Up            |
-| A            | Left          |
-| S            | Down          |
-| D            | Right         |
-| O            | A             |
-| P            | B             |
+| ↑            | Up            |
+| ←            | Left          |
+| ↓            | Down          |
+| →            | Right         |
+| X            | A             |
+| Z            | B             |
 | Enter        | Start         |
-| Space        | Select        |
+| Shift        | Select        |
 
 ## Parallelism Caveats
 
