@@ -1379,12 +1379,15 @@ class NESendoGUI(QMainWindow):
         title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #cbd5e0;")
         title_label.setAlignment(Qt.AlignCenter)
         
-        version_label = QLabel("v8.2.1")
-        version_label.setStyleSheet("font-size: 14px; color: #a0aec0;")
-        version_label.setAlignment(Qt.AlignCenter)
+        source_label = QLabel('<a href="https://github.com/1ndevelopment/NESendo" style="color: #a0aec0; text-decoration: none;">v8.2.1</a>')
+        source_label.setStyleSheet("font-size: 14px; color: #a0aec0;")
+        source_label.setAlignment(Qt.AlignCenter)
+        source_label.setTextFormat(Qt.RichText)
+        source_label.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        source_label.setOpenExternalLinks(True)
         
         title_layout.addWidget(title_label)
-        title_layout.addWidget(version_label)
+        title_layout.addWidget(source_label)
         icon_title_layout.addLayout(title_layout)
         
         layout.addLayout(icon_title_layout)
