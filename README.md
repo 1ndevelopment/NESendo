@@ -1,6 +1,6 @@
 <p align="center">
 <img
-    src="https://raw.githubusercontent.com/1ndevelopment/NESendo/refs/heads/master/NESendo/imgs/logo.png"
+    src="https://raw.githubusercontent.com/1ndevelopment/NESendo/refs/heads/master/nesendo-snakes-logo.png"
     width="75%"
 />
 </p>
@@ -104,9 +104,11 @@ git clone https://git.1ndev.com/1ndevelopment/NESendo
 cd NESendo
 ```
 
-### 2.  Install dependencies
+### 2.  Enable python env & install dependencies
 
 ```shell
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -116,13 +118,13 @@ pip install -r requirements.txt
 make lib_nes_env
 ```
 
-### 3.  Install the package
+### 3.  Install the PIP package
 
 ```shell
 pip install -e .
 ```
 
-### 4.  Play a game
+### 4.  Launch the emulator
 
 ```shell
 ## Launch via GUI:s
@@ -227,14 +229,14 @@ NESendo -h
 
 | Keyboard Key | NES Joypad    |
 |:-------------|:--------------|
-| ↑            | Up            |
-| ←            | Left          |
-| ↓            | Down          |
-| →            | Right         |
-| X            | A             |
-| Z            | B             |
+| W            | Up            |
+| A            | Left          |
+| S            | Down          |
+| D            | Right         |
+| O            | A             |
+| P            | B             |
 | Enter        | Start         |
-| Shift        | Select        |
+| Space        | Select        |
 
 ## Parallelism Caveats
 
