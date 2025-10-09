@@ -127,7 +127,7 @@ pip install -e .
 ### 4.  Launch the emulator
 
 ```shell
-## Launch via GUI:s
+## Launch via GUI:
 
 python -m NESendo.app.gui
 
