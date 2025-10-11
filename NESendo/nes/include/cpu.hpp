@@ -120,6 +120,14 @@ class CPU {
     ///
     bool type2(MainBus &bus, NES_Byte opcode);
 
+    /// Execute a type 3 instruction (unofficial opcodes).
+    ///
+    /// @param bus the bus to read and write data from and to
+    /// @param opcode the opcode of the operation to perform
+    /// @return true if the instruction succeeds
+    ///
+    bool type3(MainBus &bus, NES_Byte opcode);
+
     /// Reset the emulator using the given starting address.
     ///
     /// @param start_address the starting address for the program counter

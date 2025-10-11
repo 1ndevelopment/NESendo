@@ -497,6 +497,130 @@ bool CPU::type2(MainBus &bus, NES_Byte opcode) {
     return true;
 }
 
+bool CPU::type3(MainBus &bus, NES_Byte opcode) {
+    if ((opcode & INSTRUCTION_MODE_MASK) != 0x3)
+        return false;
+    
+    // Type 3 opcodes are typically unofficial opcodes that behave like type 1
+    // but with different addressing modes. For 0xeb (SBC #immediate), we treat
+    // it as SBC with immediate addressing mode.
+    
+    // Location of the operand, could be in RAM
+    NES_Address location = 0;
+    auto op = static_cast<Operation1>((opcode & OPERATION_MASK) >> OPERATION_SHIFT);
+    switch (static_cast<AddrMode1>((opcode & ADRESS_MODE_MASK) >> ADDRESS_MODE_SHIFT)) {
+        case M1_INDEXED_INDIRECT_X: {
+            NES_Byte zero_address = register_X + bus.read(register_PC++);
+            // Addresses wrap in zero page mode, thus pass through a mask
+            location = bus.read(zero_address & 0xff) | bus.read((zero_address + 1) & 0xff) << 8;
+            break;
+        }
+        case M1_ZERO_PAGE: {
+            location = bus.read(register_PC++);
+            break;
+        }
+        case M1_IMMEDIATE: {
+            location = register_PC++;
+            break;
+        }
+        case M1_ABSOLUTE: {
+            location = read_address(bus, register_PC);
+            register_PC += 2;
+            break;
+        }
+        case M1_INDIRECT_Y: {
+            NES_Byte zero_address = bus.read(register_PC++);
+            location = bus.read(zero_address & 0xff) | bus.read((zero_address + 1) & 0xff) << 8;
+            if (op != STA)
+                set_page_crossed(location, location + register_Y);
+            location += register_Y;
+            break;
+        }
+        case M1_INDEXED_X: {
+            // Address wraps around in the zero page
+            location = (bus.read(register_PC++) + register_X) & 0xff;
+            break;
+        }
+        case M1_ABSOLUTE_Y: {
+            location = read_address(bus, register_PC);
+            register_PC += 2;
+            if (op != STA)
+                set_page_crossed(location, location + register_Y);
+            location += register_Y;
+            break;
+        }
+        case M1_ABSOLUTE_X: {
+            location = read_address(bus, register_PC);
+            register_PC += 2;
+            if (op != STA)
+                set_page_crossed(location, location + register_X);
+            location += register_X;
+            break;
+        }
+        default: return false;
+    }
+
+    switch (op) {
+        case ORA: {
+            register_A |= bus.read(location);
+            set_ZN(register_A);
+            break;
+        }
+        case AND: {
+            register_A &= bus.read(location);
+            set_ZN(register_A);
+            break;
+        }
+        case EOR: {
+            register_A ^= bus.read(location);
+            set_ZN(register_A);
+            break;
+        }
+        case ADC: {
+            NES_Byte operand = bus.read(location);
+            NES_Address sum = register_A + operand + flags.bits.C;
+            //Carry forward or UNSIGNED overflow
+            flags.bits.C = sum & 0x100;
+            //SIGNED overflow, would only happen if the sign of sum is
+            //different from BOTH the operands
+            flags.bits.V = (register_A ^ sum) & (operand ^ sum) & 0x80;
+            register_A = static_cast<NES_Byte>(sum);
+            set_ZN(register_A);
+            break;
+        }
+        case STA: {
+            bus.write(location, register_A);
+            break;
+        }
+        case LDA: {
+            register_A = bus.read(location);
+            set_ZN(register_A);
+            break;
+        }
+        case CMP: {
+            NES_Address diff = register_A - bus.read(location);
+            flags.bits.C = !(diff & 0x100);
+            set_ZN(diff);
+            break;
+        }
+        case SBC: {
+            //High carry means "no borrow", thus negate and subtract
+            NES_Address subtrahend = bus.read(location),
+                     diff = register_A - subtrahend - !flags.bits.C;
+            //if the ninth bit is 1, the resulting number is negative => borrow => low carry
+            flags.bits.C = !(diff & 0x100);
+            //Same as ADC, except instead of the subtrahend,
+            //substitute with it's one complement
+            flags.bits.V = (register_A ^ diff) & (~subtrahend ^ diff) & 0x80;
+            register_A = diff;
+            set_ZN(diff);
+            break;
+        }
+        default: return false;
+    }
+    return true;
+}
+
 void CPU::reset(NES_Address start_address) {
     skip_cycles = 0;
     cycles = 0;
@@ -567,7 +691,7 @@ void CPU::cycle(MainBus &bus) {
     // Using short-circuit evaluation, call the other function only if the
     // first failed. ExecuteImplied must be called first and ExecuteBranch
     // must be before ExecuteType0
-    if (implied(bus, op) || branch(bus, op) || type1(bus, op) || type2(bus, op) || type0(bus, op))
+    if (implied(bus, op) || branch(bus, op) || type1(bus, op) || type2(bus, op) || type0(bus, op) || type3(bus, op))
         skip_cycles += OPERATION_CYCLES[op];
     else {
         std::cout << "failed to execute opcode: " << std::hex << +op << std::endl;
