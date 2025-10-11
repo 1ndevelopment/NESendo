@@ -551,6 +551,19 @@ void CPU::cycle(MainBus &bus) {
     skip_cycles = 0;
     // read the opcode from the bus and lookup the number of cycles
     NES_Byte op = bus.read(register_PC++);
+    
+    // Handle opcodes with 0 cycles (unused/unofficial opcodes) as NOPs
+    if (OPERATION_CYCLES[op] == 0) {
+        // For unofficial opcodes, treat as NOP and advance PC appropriately
+        // Most unofficial opcodes are 2-byte NOPs, so advance PC by 1 more byte
+        if (op == 0x0c || op == 0x04 || op == 0x1f) {
+            // These are typically 2-byte NOPs
+            ++register_PC;
+        }
+        // For other unofficial opcodes, just continue (1-byte NOP)
+        return;
+    }
+    
     // Using short-circuit evaluation, call the other function only if the
     // first failed. ExecuteImplied must be called first and ExecuteBranch
     // must be before ExecuteType0
