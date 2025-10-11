@@ -2,7 +2,7 @@
 //  File:         log.hpp
 //  Description:  Logging utilities for the project
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef LOG_HPP

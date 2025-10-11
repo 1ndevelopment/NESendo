@@ -2,7 +2,7 @@
 //  File:         mapper_UxROM.hpp
 //  Description:  An implementation of the UxROM mapper
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef MAPPERUXROM_HPP

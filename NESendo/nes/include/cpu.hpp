@@ -2,7 +2,7 @@
 //  File:         cpu.hpp
 //  Description:  This class houses the logic and data for the NES CPU
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef CPU_HPP

@@ -2,7 +2,7 @@
 //  File:         picture_bus.hpp
 //  Description:  This class houses picture bus data from the PPU
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef PICTURE_BUS_HPP

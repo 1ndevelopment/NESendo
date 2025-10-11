@@ -2,7 +2,7 @@
 //  File:         mapper_NROM.hpp
 //  Description:  An implementation of the NROM mapper
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef MAPPERNROM_HPP

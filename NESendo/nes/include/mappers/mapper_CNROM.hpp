@@ -2,7 +2,7 @@
 //  File:         mapper_CNROM.hpp
 //  Description:  An implementation of the CNROM mapper
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef MAPPERCNROM_HPP

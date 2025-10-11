@@ -2,7 +2,7 @@
 //  File:         palette.hpp
 //  Description:  This file describes the color palette for RGB conversion
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef PALETTE_HPP

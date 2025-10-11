@@ -2,7 +2,7 @@
 //  File:         main_bus.hpp
 //  Description:  This class houses the main bus data for the NES
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef MAIN_BUS_HPP

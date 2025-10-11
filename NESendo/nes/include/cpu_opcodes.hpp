@@ -2,7 +2,7 @@
 //  File:         cpu_opcodes.hpp
 //  Description:  This file defines relevant CPU opcodes
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef CPU_OPCODES_HPP

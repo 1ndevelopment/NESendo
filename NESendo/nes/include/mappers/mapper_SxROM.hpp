@@ -2,7 +2,7 @@
 //  File:         mapper_SxROM.hpp
 //  Description:  An implementation of the SxROM mapper
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef MAPPERSXROM_HPP

@@ -2,7 +2,7 @@
 //  File:         ppu.cpp
 //  Description:  This class houses the logic and data for the PPU of an NES
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #include <cstring>

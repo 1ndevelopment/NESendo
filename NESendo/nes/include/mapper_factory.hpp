@@ -2,7 +2,7 @@
 //  File:         mapper.hpp
 //  Description:  An abstract factory for mappers
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef MAPPER_FACTORY_HPP

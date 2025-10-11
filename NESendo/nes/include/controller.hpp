@@ -2,7 +2,7 @@
 //  File:         controller.hpp
 //  Description:  This class houses the logic and data for an NES controller
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef CONTROLLER_HPP

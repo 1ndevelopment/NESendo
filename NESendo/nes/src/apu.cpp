@@ -2,7 +2,7 @@
 //  File:         apu.cpp
 //  Description:  This class houses the Audio Processing Unit (APU) for the NES
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #include "apu.hpp"

@@ -2,7 +2,7 @@
 //  File:         common.hpp
 //  Description:  This file defines common types used in the project
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #ifndef COMMON_HPP

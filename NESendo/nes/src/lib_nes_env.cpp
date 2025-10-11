@@ -2,7 +2,7 @@
 //  File:         lib_nes_env.cpp
 //  Description:  file describes the outward facing ctypes API for Python
 //
-//  Copyright (c) 2019 Christian Kauten. All rights reserved.
+//  Copyright (c) 2025 Jacy Kincade. All rights reserved.
 //
 
 #include <string>
